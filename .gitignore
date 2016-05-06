@@ -1,0 +1,10 @@
+settings.py
+
+*.pyc
+*~
+*.swp
+.DS_Store
+
+*.xml
+
+env
