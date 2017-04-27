@@ -1,7 +1,15 @@
 #!/usr/bin/env python
+from __future__ import print_function
+
 import argparse
 import os
-import urllib
+
+try:
+    # py2
+    from urllib import urlretrieve
+except ImportError:
+    # py3
+    from urllib.request import urlretrieve
 
 from lxml import etree
 
@@ -33,21 +41,22 @@ for key in services:
         delta_x = (extend_xmax - extend_xmin) / service['paging']['nx']
         delta_y = (extend_ymax - extend_ymin) / service['paging']['ny']
 
-        for i in xrange(service['paging']['nx']):
-            for j in xrange(service['paging']['ny']):
+        for i in range(service['paging']['nx']):
+            for j in range(service['paging']['ny']):
                 xmin = extend_xmin + delta_x * i
                 ymin = extend_ymin + delta_y * j
                 xmax = extend_xmin + delta_x * (i + 1)
                 ymax = extend_ymin + delta_y * (j + 1)
 
-                url_args['bbox'] = '%s, %s, %s, %s' % (xmin, ymin, xmax, ymax)
+                url_args['bbox'] = '%s,%s,%s,%s' % (xmin, ymin, xmax, ymax)
 
                 url = '%(url)s?service=WFS&request=GetFeature&version=2.0.0&typeNames=%(layer)s&srsName=%(srid)s&BBOX=%(bbox)s' % url_args
 
                 filename = '%s%s_%i_%i.xml' % (service['tmp_dir'], service['layer'], i, j)
 
-                print 'fetching %s, BBOX(%s)' % (filename, url_args['bbox'])
-                urllib.urlretrieve(url, filename)
+                print('fetching %s, BBOX(%s)' % (filename, url_args['bbox']))
+                print(url)
+                urlretrieve(url, filename)
 
     if not args.no_combine:
         # read the first xml file
@@ -64,7 +73,7 @@ for key in services:
             if filename.startswith(service['layer']):
                 abs_filename = service['tmp_dir'] + filename
                 if abs_filename != first_filename:
-                    print 'merging', abs_filename
+                    print('merging', abs_filename)
 
                     xml = etree.parse(abs_filename)
                     root = xml.getroot()
@@ -83,6 +92,6 @@ for key in services:
         first_root.xpath('.//wfs:boundedBy/gml:Envelope/gml:lowerCorner', namespaces=nsmap)[0].text = '%s %s' % (service['extend'][0], service['extend'][1])
         first_root.xpath('.//wfs:boundedBy/gml:Envelope/gml:upperCorner', namespaces=nsmap)[0].text = '%s %s' % (service['extend'][2], service['extend'][3])
 
-        f = open(service['filename'], 'w')
+        f = open(service['filename'], 'wb')
         f.write(etree.tostring(first_xml))
         f.close()
