@@ -5,7 +5,8 @@ Downloads GML files from a set of WFS service in a pseudo-paginated way using bo
 
 Prerequisites
 -------------
-The download-script requires Python 2 and the `lxml` package.
+The download-script requires the `lxml` package.
+You can install it via `pip install -r requirements.txt`.
 
 Setup
 -----
