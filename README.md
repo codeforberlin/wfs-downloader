@@ -3,6 +3,11 @@ WFS Downloader
 
 Downloads GML files from a set of WFS service in a pseudo-paginated way using bounding boxes and combine them again to one file. The WFS services are specified in settings.py.
 
+Prerequisites
+-------------
+The download-script requires the `lxml` package.
+You can install it via `pip install -r requirements.txt`.
+
 Setup
 -----
 
