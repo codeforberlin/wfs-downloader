@@ -8,33 +8,32 @@ Prerequisites
 The download-script requires the `lxml` package.
 You can install it via `pip install -r requirements.txt`.
 
-Setup
------
+Install
+-------
 
 ```
-cp settings.sample.py settings.py
+pip install wfs-downloader
 ```
-
-Edit `settings.py` for services.
-
 
 Usage
 -----
 
+Create a `config.yml` specifying your setup like this:
+
+```yml
+
 ```
-./download.py
+
+Then run the script in the same directory as `config.yml` or use the `-c` argument:
+
+```
+wfs-downloader
+wfs-downloader -c /path/to/my_custom_config.yml
 ```
 
 Help
 ----
 
 ```
-./download.py --help
-usage: Downloads GML files from a set of WFS service in a pseudo-paginated way using bounding boxes and combine them again to one file. The WFS services are specified in settings.py.
-
-optional arguments:
-  -h, --help         show this help message and exit
-  --no-download      skip the download
-  --no-combine       skip the combine
-  --service SERVICE  download/combine only this service
+$ wfs-downloader --help
 ```
