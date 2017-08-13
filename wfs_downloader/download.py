@@ -16,7 +16,7 @@ from lxml import etree
 
 def main():
     parser = argparse.ArgumentParser(usage='Downloads GML files from a set of WFS service in a pseudo-paginated way using bounding boxes and combine them again to one file. The WFS services are specified in settings.py.')
-    parser.add_argument('config', nargs='?', default='config.yml', help='config file [default: config.yml]')
+    parser.add_argument('config', help='config file')
     parser.add_argument('--no-download', help='skip the download', action='store_true')
     parser.add_argument('--no-combine', help='skip the combine', action='store_true')
 
@@ -36,8 +36,8 @@ def download_files(config):
     west_range = list(arange(config['bbox']['west'], config['bbox']['east'], config['size']))
     south_range = list(arange(config['bbox']['south'], config['bbox']['north'], config['size']))
 
-    for i, west in enumerate(west_range):
-        for j, south in enumerate(south_range):
+    for west in west_range:
+        for south in south_range:
 
             url = '%(url)s?service=WFS&request=GetFeature&version=2.0.0&typeNames=%(layer)s&srsName=%(srid)s&BBOX=%(west)f,%(south)f,%(east)f,%(north)f' % {
                 'url': config['url'],
@@ -50,7 +50,12 @@ def download_files(config):
             }
 
             name, extension = os.path.splitext(config['outputfile'])
-            filename = os.path.join(config['tmpdir'], '%s_%i_%i.%s' % (name, i, j, extension))
+            filename = os.path.join(config['tmpdir'], '%(name)s_%(west)s_%(south)s%(extension)s' % {
+                'name': name,
+                'west': west,
+                'south': south,
+                'extension': extension
+            })
             print('fetching %s' % filename)
             urlretrieve(url, filename)
 
@@ -58,7 +63,12 @@ def download_files(config):
 def combine_files(config):
     # read the first xml file
     name, extension = os.path.splitext(config['outputfile'])
-    first_filename = os.path.join(config['tmpdir'], '%s_0_0.%s' % (name, extension))
+    first_filename = os.path.join(config['tmpdir'], '%(name)s_%(west)s_%(south)s%(extension)s' % {
+        'name': name,
+        'west': config['bbox']['west'],
+        'south': config['bbox']['south'],
+        'extension': extension
+    })
 
     first_xml = etree.parse(first_filename)
     first_root = first_xml.getroot()

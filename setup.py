@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-from wms_downloader import (
+from wfs_downloader import (
     __title__ as title,
     __version__ as version,
     __author__ as author,
@@ -12,11 +12,12 @@ email = 'jochenklar@gmail.com'
 url = 'https://github.com/codeforberlin/wfs-downloader'
 
 requirements = [
-    'lxml==3.7.3'
+    'lxml==3.7.3',
+    'PyYAML'
 ]
 
-scripts = [
-    'bin/wfs-downloader'
+console_scripts = [
+    'wfs-downloader=wfs_downloader.download:main'
 ]
 
 setup(
@@ -32,5 +33,7 @@ setup(
     packages=find_packages(),
     install_requires=requirements,
     classifiers=[],
-    scripts=scripts,
+    entry_points={
+        'console_scripts': console_scripts
+    }
 )
