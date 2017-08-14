@@ -1,10 +1,14 @@
-settings.py
-
 *.pyc
 *~
 *.swp
 .DS_Store
 
-*.xml
+build
+dist
+*.egg-info
 
 env
+env3
+
+*.yml
+*.xml
