@@ -3,13 +3,16 @@ from __future__ import print_function
 import argparse
 import os
 import yaml
+import sys
 
 try:
     # py2
     from urllib import urlretrieve
+    import urllib
 except ImportError:
     # py3
     from urllib.request import urlretrieve
+    import urllib.request
 
 from lxml import etree
 
@@ -33,6 +36,16 @@ def main():
 
 
 def download_files(config):
+
+    if (sys.version_info > (3, 0)):
+        # Python 3 code in this block
+        opener = urllib.request.build_opener()
+        opener.addheaders = [('User-agent', 'wfs-downloader/0.1')]
+        urllib.request.install_opener(opener)
+    else:
+        # Python 2 code in this block
+        urllib.URLopener.version = "wfs-downloader/0.1"
+
     west_range = list(arange(config['bbox']['west'], config['bbox']['east'], config['size']))
     south_range = list(arange(config['bbox']['south'], config['bbox']['north'], config['size']))
 
