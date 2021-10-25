@@ -17,9 +17,18 @@ except ImportError:
 from lxml import etree
 
 
+class Parser(argparse.ArgumentParser):
+
+    def error(self, message):
+        self.print_help()
+        sys.exit(2)
+
+
 def main():
-    parser = argparse.ArgumentParser(usage='Downloads GML files from a set of WFS service in a pseudo-paginated way using bounding boxes and combine them again to one file. The WFS services are specified in settings.py.')
-    parser.add_argument('config', help='config file')
+    parser = Parser(usage='Downloads GML files from a set of WFS service in a pseudo-paginated '
+                          'way using bounding boxes and combine them again to one file. The WFS '
+                          'services are specified in settings.py.')
+    parser.add_argument('config', help='config file', default=None)
     parser.add_argument('--no-download', help='skip the download', action='store_true')
     parser.add_argument('--no-combine', help='skip the combine', action='store_true')
 
