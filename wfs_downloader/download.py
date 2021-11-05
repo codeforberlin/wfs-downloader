@@ -1,20 +1,11 @@
-from __future__ import print_function
-
 import argparse
 import os
 import yaml
 import sys
+import xml.etree.ElementTree as ET
 
-try:
-    # py2
-    from urllib import urlretrieve
-    import urllib
-except ImportError:
-    # py3
-    from urllib.request import urlretrieve
-    import urllib.request
-
-from lxml import etree
+from urllib.request import urlretrieve
+import urllib.request
 
 
 class Parser(argparse.ArgumentParser):
@@ -35,7 +26,7 @@ def main():
     args = parser.parse_args()
 
     with open(args.config) as f:
-        config = yaml.load(f.read())
+        config = yaml.safe_load(f.read())
 
     if not args.no_download:
         download_files(config)
@@ -92,9 +83,9 @@ def combine_files(config):
         'extension': extension
     })
 
-    first_xml = etree.parse(first_filename)
+    first_xml = ET.parse(first_filename)
     first_root = first_xml.getroot()
-    nsmap = first_root.nsmap
+    nsmap = dict([node for _, node in ET.iterparse(first_filename, events=['start-ns'])])
 
     try:
         number_matched = int(first_root.get('numberMatched'))
@@ -112,7 +103,7 @@ def combine_files(config):
             if abs_filename != first_filename:
                 print('merging', abs_filename)
 
-                xml = etree.parse(abs_filename)
+                xml = ET.parse(abs_filename)
                 root = xml.getroot()
 
                 if number_matched is not False:
@@ -121,7 +112,7 @@ def combine_files(config):
                 if number_returned is not False:
                     number_returned += int(root.get('numberReturned'))
 
-                for node in xml.xpath('.//wfs:member', namespaces=nsmap):
+                for node in xml.findall('.//wfs:member', namespaces=nsmap):
                     first_root.append(node)
 
     # manipulate numberMatched numberReturned
@@ -132,11 +123,13 @@ def combine_files(config):
         first_root.set('numberReturned', str(number_returned))
 
     # manipulate the extend / bounding box
-    first_root.xpath('.//wfs:boundedBy/gml:Envelope/gml:lowerCorner', namespaces=nsmap)[0].text = '%s %s' % (config['bbox']['west'], config['bbox']['east'])
-    first_root.xpath('.//wfs:boundedBy/gml:Envelope/gml:upperCorner', namespaces=nsmap)[0].text = '%s %s' % (config['bbox']['south'], config['bbox']['north'])
+    first_root.findall('.//wfs:boundedBy/gml:Envelope/gml:lowerCorner', namespaces=nsmap)[0].text = \
+        '%s %s' % (config['bbox']['west'], config['bbox']['east'])
+    first_root.findall('.//wfs:boundedBy/gml:Envelope/gml:upperCorner', namespaces=nsmap)[0].text = \
+        '%s %s' % (config['bbox']['south'], config['bbox']['north'])
 
-    with open(config['outputfile'], 'wb') as f:
-        f.write(etree.tostring(first_xml))
+    # write the result as outputfile
+    first_xml.write(config['outputfile'])
 
 
 def arange(start, stop, step):
