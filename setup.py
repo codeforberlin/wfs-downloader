@@ -8,7 +8,7 @@ from wfs_downloader import (
 )
 
 description = 'Downloads GML files from a WFS service in a pseudo-paginated way using bounding boxes and combine them again to one file.'
-email = 'jochenklar@gmail.com'
+email = 'mail@jochenklar.de'
 url = 'https://github.com/codeforberlin/wfs-downloader'
 
 requirements = [
