@@ -7,12 +7,12 @@ __pycache__/
 *.save
 .DS_Store
 
-build
-dist
-*.egg-info
+/env
+/venv
 
-env
-env3
+/build
+/dist
+/*.egg-info
 
 *.yml
 *.xml

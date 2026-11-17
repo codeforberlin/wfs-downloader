@@ -1,0 +1,58 @@
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[project]
+name = "wfs-downloader"
+dynamic = ["version"]
+description = "Downloads GML files from a WFS service in a pseudo-paginated way using bounding boxes and combine them again to one file."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Jochen Klar", email = "mail@jochenklar.de" }]
+maintainers = [{ name = "Jochen Klar", email = "mail@jochenklar.de" }]
+classifiers = [
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+dependencies = [
+    "PyYAML",
+    "requests",
+    "rich",
+]
+
+[project.urls]
+Homepage = "https://github.com/codeforberlin/wfs-downloader"
+
+[project.scripts]
+wfs-downloader = "wfs_downloader.main:main"
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.targets.wheel]
+packages = ["wfs_downloader"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.ruff.lint]
+select = [
+    "B",    # flake8-bugbear
+    "C4",   # flake8-comprehensions
+    "E",    # pycodestyle
+    "F",    # pyflakes
+    "I",    # isort
+    "PGH",  # pygrep-hooks
+    "RUF",  # ruff
+    "UP",   # pyupgrade
+    "W",    # pycodestyle
+    "YTT",  # flake8-2020
+]

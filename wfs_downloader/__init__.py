@@ -1,5 +1,7 @@
-__title__ = 'wfs-downloader'
-__version__ = '1.2.0'
-__author__ = 'Jochen Klar'
-__license__ = 'MIT'
-__copyright__ = 'Copyright 2017 Jochen Klar'
+from importlib.metadata import PackageNotFoundError
+from importlib.metadata import version as _version
+
+try:
+    VERSION = __version__ = _version(__package__)
+except PackageNotFoundError:
+    VERSION = __version__ = '0.0.0+unknown'

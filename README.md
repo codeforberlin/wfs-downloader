@@ -1,45 +1,50 @@
 WFS Downloader
 ==============
 
-Downloads GML files from a set of WFS service in a pseudo-paginated way using bounding boxes and combine them again to one file.
+Downloads GML files from a [WFS 2.0](https://www.ogc.org/standard/wfs/) service in a pseudo-paginated way using bounding boxes and combines them again into one file.
 
-Install
--------
+Many WFS services limit how many features a single request may return. `wfs-downloader` splits a large bounding box into square tiles, downloads each tile with a separate `GetFeature` request, and then merges all tiles into one GML file. Progress bars show how many tiles are downloaded and merged.
+
+Setup
+-----
 
 ```
-pip install wfs-downloader
+pip install wfs-downloader                                       # from PyPI
+pip install git+https://github.com/codeforberlin/wfs-downloader  # directly from GitHub
 ```
 
 Usage
 -----
 
-Create a `config.yml` specifying your setup like this:
+Create a `config.yml` specifying your setup, e.g. for all street trees in Berlin:
 
 ```yml
-url: http://fbinter.stadt-berlin.de/fb/wfs/data/senstadt/s_wfs_baumbestand_an
-layer: fis:s_wfs_baumbestand_an
+url: https://gdi.berlin.de/services/wfs/baumbestand
+layer: baumbestand:strassenbaeume
 
 bbox:
-  west:   370000.0
-  south: 5800000.0
-  east:   415000.0
-  north: 5837000.0
+  west:   360000.0
+  south: 5790000.0
+  east:   420000.0
+  north: 5840000.0
 
 size: 10000
 outputfile: strassenbaeume.xml
 projection: EPSG:25833
-tmpdir: /tmp
+tmpdir: tmp
 ```
 
 where:
 
-* `url` is the url of the WFS Service,
-* `layer` is the name of the Layer,
-* `bbox` is the bounding box for th objects you want to retrieve,
-* `size` is the extend of a single request (or page),
-* `outputfile` is the name of the resulting GML file,
-* `projection` is the used projection, and
-* `tmpfile` is the path to the directory to store temporary files for each request.
+* `url` is the URL of the WFS service, without query parameters,
+* `layer` is the name of the layer (the `typeNames` of the request),
+* `bbox` is the bounding box for the objects you want to retrieve, in the units of `projection`,
+* `size` is the edge length of a single tile (or page), in the units of `projection`,
+* `outputfile` is the path of the resulting GML file,
+* `projection` is the projection used for the requests and the result, and
+* `tmpdir` is the directory to store the downloaded tiles. It is created if it does not exist.
+
+The example covers Berlin with 6 × 5 tiles of 10 × 10 km, i.e. 30 requests.
 
 Then run the script with the `config.yml` as argument:
 
@@ -47,18 +52,9 @@ Then run the script with the `config.yml` as argument:
 wfs-downloader config.yml
 ```
 
-Help
-----
+To only download the tiles, or to only merge tiles that were already downloaded, use:
 
 ```
-$ wfs-downloader --help
-usage: Downloads GML files from a set of WFS service in a pseudo-paginated way using bounding boxes and combine them again to one file. The WFS services are specified in settings.py.
-
-positional arguments:
-  config         config file
-
-optional arguments:
-  -h, --help     show this help message and exit
-  --no-download  skip the download
-  --no-combine   skip the combine
+wfs-downloader config.yml --no-combine
+wfs-downloader config.yml --no-download
 ```
