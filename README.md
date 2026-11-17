@@ -3,7 +3,7 @@ WFS Downloader
 
 Downloads GML files from a [WFS 2.0](https://www.ogc.org/standard/wfs/) service in a pseudo-paginated way using bounding boxes and combines them again into one file.
 
-Many WFS services limit how many features a single request may return. `wfs-downloader` splits a large bounding box into square tiles, downloads each tile with a separate `GetFeature` request, and then merges all tiles into one GML file. Progress bars show how many tiles are downloaded and merged.
+Many WFS services limit how many features a single request may return. `wfs-downloader` splits a large bounding box into square tiles, downloads each tile with a separate `GetFeature` request, and then merges all tiles into one GML file.
 
 Setup
 -----
