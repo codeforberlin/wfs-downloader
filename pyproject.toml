@@ -7,6 +7,7 @@ name = "wfs-downloader"
 dynamic = ["version"]
 description = "Downloads GML files from a WFS service in a pseudo-paginated way using bounding boxes and combine them again to one file."
 readme = "README.md"
+requires-python = ">=3.11"
 license = "MIT"
 license-files = ["LICENSE"]
 authors = [{ name = "Jochen Klar", email = "mail@jochenklar.de" }]
